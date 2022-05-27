@@ -1,4 +1,5 @@
 
+import 'package:clean_tdd_numbers/core/usecases/usecase.dart';
 import 'package:clean_tdd_numbers/core/util/input_converter.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/domain/usecases/get_concrete_number_usecase.dart';
@@ -6,7 +7,6 @@ import 'package:clean_tdd_numbers/features/number_trivia/domain/usecases/get_ran
 import 'package:clean_tdd_numbers/features/number_trivia/presentation/notifier/number_trivia_notifier.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/presentation/notifier/number_trivia_state.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -25,7 +25,6 @@ void main() {
 
   // Class to test
   late NumberNotifier numberNotifier;
-  late NumberTriviaState state;
 
   // Instantiate repositories
   late MockGetConcreteNumberUseCase mockGetConcreteNumberUseCase;
@@ -101,7 +100,45 @@ void main() {
         // ex: verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
         // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
         verify(() => mockGetConcreteNumberUseCase(Params(number: tNumberParsed))).called(1);
+        verifyZeroInteractions(mockGetRandomNumberUseCase);
       },
+    timeout: const Timeout(Duration(milliseconds: 500)),
+  );
+
+
+  test (
+    'Random Event test case',
+        () async {
+      // On the fly mock behaviour definition
+
+      when(() => mockInputConverter.stringToUnsignedInt(tNumberString))
+          .thenAnswer((_) => Right(tNumberParsed));
+
+      when(() =>
+          mockGetRandomNumberUseCase(NoParams()))
+          .thenAnswer((_) async => const Right(tNumberTrivia));
+
+
+      // Test expect first
+
+      final expected = <NumberTriviaState>[
+        Loading(),
+        Loaded(trivia: tNumberTrivia)
+      ];
+
+      expectLater(numberNotifier.stream, emitsInOrder(expected));
+
+      // Act Later
+      // ex:  await repositoryImp.getConcreteNumberTrivia(tNumber);
+
+      await numberNotifier.getRandomTrivia();
+
+      // Verify
+      // ex: verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
+      // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
+      verify(() => mockGetRandomNumberUseCase(NoParams())).called(1);
+      verifyZeroInteractions(mockGetConcreteNumberUseCase);
+    },
     timeout: const Timeout(Duration(milliseconds: 500)),
   );
 
