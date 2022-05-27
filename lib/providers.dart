@@ -81,7 +81,7 @@ final getRandomNumberUseCaseProvider = Provider ((ref)  {
 });
 
 
-final numberNotifierProvider = StateNotifierProvider.autoDispose <NumberNotifier, NumberTriviaState> ((ref)  {
+final numberNotifierProvider = StateNotifierProvider <NumberNotifier, NumberTriviaState> ((ref)  {
 
   final getConcreteUseCase = ref.watch(getConcreteNumberUseCaseProvider);
   final getRandomUseCase = ref.watch(getRandomNumberUseCaseProvider);
