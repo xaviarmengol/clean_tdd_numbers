@@ -31,7 +31,7 @@ void main() {
   });
 
   // Fixures
-  var tNumber = 1;
+  var tNumber = 1.0;
   var tNumberString = tNumber.toString();
   var tNumberTriviaModel = NumberTriviaModel(text:"text", number:1, found:true, type:"type");
 

@@ -2,7 +2,6 @@ import 'package:clean_tdd_numbers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../domain/entities/number_trivia.dart';
 import '../notifier/number_trivia_state.dart';
 import 'InputNumberPage_state.dart';
@@ -31,75 +30,103 @@ class InputNumberPageProvider extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
 
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: NumberStateDisplayer(numberState),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(32.0),
+            Expanded(
+              flex: 2,
               child: Column(
-                children: <Widget>[
-                  TextField(
-                    onChanged: (valueRaw) {
-                      ref
-                          .read(inputNumberPageProvider.notifier)
-                          .setRequestedValue(valueRaw);
-                    },
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Input Number',
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              ref
-                                  .read(numberNotifierProvider.notifier)
-                                  .getConcreteTrivia(pageState.requestedValue);
-                            },
-                            child: Text('Search'),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.black),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey)),
-                            onPressed: () {
-                              ref
-                                  .read(numberNotifierProvider.notifier)
-                                  .getRandomTrivia();
-                            },
-                            child: Text('Get Random Trivia'),
-                          ),
-                        ),
-                      )
-                    ],
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: NumberStateDisplayer(numberState),
                   ),
                 ],
+              ),
+            ),
+
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: RequestNumberButtons(pageState: pageState),
               ),
             ),
           ],
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class RequestNumberButtons extends ConsumerWidget {
+  const RequestNumberButtons({
+    Key? key,
+    required this.pageState,
+  }) : super(key: key);
+
+  final InputNumberPageState pageState;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: <Widget>[
+        TextField(
+          onChanged: (valueRaw) {
+            ref
+                .read(inputNumberPageProvider.notifier)
+                .setRequestedValue(valueRaw);
+          },
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Input Number',
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(numberNotifierProvider.notifier)
+                        .getConcreteTrivia(pageState.requestedValue);
+                  },
+                  child: Text('Search'),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(
+                              Colors.black),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(
+                              Colors.grey)),
+                  onPressed: () {
+                    ref
+                        .read(numberNotifierProvider.notifier)
+                        .getRandomTrivia();
+                  },
+                  child: const Text(
+                      'Get Random Trivia',
+                        textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 }
@@ -134,6 +161,7 @@ class NumberStateDisplayer extends ConsumerWidget {
           ),
           Text(
             (state as Error).message,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ],
@@ -155,12 +183,17 @@ class DataIsLoaded extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          numberTrivia.number.toString(),
-          style: Theme.of(context).textTheme.headline1,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            numberTrivia.number.toStringAsFixed(0),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline1,
+          ),
         ),
         Text(
             numberTrivia.text,
+          textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
         ),
       ],

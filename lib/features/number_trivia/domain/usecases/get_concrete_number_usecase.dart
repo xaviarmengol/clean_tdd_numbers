@@ -20,7 +20,7 @@ class GetConcreteNumberUseCase extends UseCase<NumberTrivia, Params>{
 }
 
 class Params extends Equatable {
-  final int number;
+  final double number;
   const Params({required this.number});
 
   @override

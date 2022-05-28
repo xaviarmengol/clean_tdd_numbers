@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:core';
 
 import 'package:clean_tdd_numbers/features/number_trivia/domain/entities/number_trivia.dart';
@@ -12,7 +11,7 @@ import 'package:equatable/equatable.dart';
 class NumberTriviaModel extends Equatable {
   NumberTriviaModel({
       String? text,
-      int? number,
+      double? number,
       bool? found,
       String? type,}){
     _text = text;
@@ -27,7 +26,7 @@ class NumberTriviaModel extends Equatable {
     //final json = jsonDecode(jsonRaw ?? "{}");
 
     var numDouble = double.parse(json['number'].toString());
-    var num = numDouble.toInt();
+    var num = numDouble;//.toInt();
 
     _text = json['text'];
     _number = num;
@@ -36,12 +35,12 @@ class NumberTriviaModel extends Equatable {
   }
 
   String? _text;
-  int? _number;
+  double? _number;
   bool? _found;
   String? _type;
 
   String? get text => _text;
-  int? get number => _number;
+  double? get number => _number;
   bool? get found => _found;
   String? get type => _type;
 

@@ -14,7 +14,7 @@ abstract class NumberTriviaLocalDataSource {
   /// Throws [NoLocalDataException] if no cached data is present.
 
   Future<NumberTriviaModel> getLastNumber();
-  Future<NumberTriviaModel> getConcreteNumberTrivia(int number);
+  Future<NumberTriviaModel> getConcreteNumberTrivia(double number);
   Future<void> cacheNumberTrivia (NumberTriviaModel triviaToCache);
 
 }
@@ -63,7 +63,7 @@ class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
   }
 
   @override
-  Future<NumberTriviaModel> getConcreteNumberTrivia(int number) {
+  Future<NumberTriviaModel> getConcreteNumberTrivia(double number) {
 
     var result = _getNumberTriviaModelFromLocalPrefs(number.toString());
     return(Future.value(result));

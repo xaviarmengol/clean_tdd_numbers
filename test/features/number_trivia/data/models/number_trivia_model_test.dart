@@ -48,7 +48,7 @@ void main () {
 
       //Test
       expect(numberModel.text, "4e+185 is the number of planck volumes in the observable universe.");
-      expect(numberModel.number, 4e+10);
+      expect(numberModel.number, 4e+185);
       expect(numberModel.found, true);
       expect(numberModel.type, "trivia");
       //Verify

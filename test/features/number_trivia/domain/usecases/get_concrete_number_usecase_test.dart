@@ -23,7 +23,7 @@ void main() {
     usecase = GetConcreteNumberUseCase(mockNumberTriviaRepository);
   });
 
-  final tNumber = 1;
+  final tNumber = 1.0;
   final tNumberTrivia = NumberTrivia(text: 'text', number: 1);
 
   test (

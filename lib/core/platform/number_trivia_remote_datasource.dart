@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 abstract class NumberTriviaRemoteDataSource {
 
-  Future<NumberTriviaModel> getConcreteNumberTrivia(int number);
+  Future<NumberTriviaModel> getConcreteNumberTrivia(double number);
 
   Future<NumberTriviaModel> getRandomNumberTrivia();
 
@@ -30,10 +30,12 @@ class NumberTriviaRemoteDataSourceImpl implements NumberTriviaRemoteDataSource {
 
 
   @override
-  Future<NumberTriviaModel> getConcreteNumberTrivia(int number) async {
+  Future<NumberTriviaModel> getConcreteNumberTrivia(double number) async {
     return _getResponse(() {
+      
+        final String numberRequest = number.toStringAsFixed(0);
 
-        final request = 'http://numbersapi.com/$number';
+        final request = 'http://numbersapi.com/$numberRequest';
         print (request);
 
         return client.get(

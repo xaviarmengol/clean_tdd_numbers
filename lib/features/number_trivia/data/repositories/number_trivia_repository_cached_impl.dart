@@ -24,7 +24,7 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
   });
 
   @override
-  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int? number) async {
+  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(double? number) async {
     return _getTrivia(() => remoteDataSource.getConcreteNumberTrivia(number ?? 0), number: number ?? 0);
   }
 
@@ -34,19 +34,19 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
   }
 
 
-  Future<Either<Failure, NumberTrivia>> _getTrivia(ReturnFutureModelFun getRemoteData, {int? number}) async {
+  Future<Either<Failure, NumberTrivia>> _getTrivia(ReturnFutureModelFun getRemoteData, {double? number}) async {
 
     NumberTriviaModel numberTriviaModelFromRemote;
     NumberTriviaModel numberTriviaModel;
     Either<Failure, NumberTrivia> numberTriviaResult = Left(CacheFailure());
 
-    int numToGet = number ?? 0;
+    double numToGet = number ?? 0;
 
     // We try to upload from network and catch
     if (await networkInfo.isConnected) {
       try {
         numberTriviaModelFromRemote = await getRemoteData();
-        numToGet = numberTriviaModelFromRemote.number ?? 0;
+        numToGet = numberTriviaModelFromRemote.number ?? 0.0;
 
         //print("Repository -> ReadRemote: {$numberTriviaModelFromRemote}");
         await localDataSource.cacheNumberTrivia(numberTriviaModelFromRemote);
@@ -67,19 +67,6 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
       print("Error loading data from local - Concrete number ");
 
       numberTriviaResult = Left(CacheFailure());
-
-      /*
-      // One source of truth
-      try {
-        numberTriviaModel = await localDataSource.getLastNumber();
-        //print("Repository -> GetLastNumber: {$numberTriviaModel}");
-
-        numberTriviaResult = Right(numberTriviaModel.toNumberTrivia());
-      } catch (e) {
-        print("Error loading data from local  - Last Number");
-      }
-
-       */
 
     }
 

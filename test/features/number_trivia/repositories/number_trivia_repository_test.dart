@@ -40,7 +40,7 @@ void main() {
 
   // Define fixures
 
-  var tNumber = 1;
+  var tNumber = 1.0;
   var tNumberTriviaModel = NumberTriviaModel(text:"text", number:1, found:true, type:"type");
   var tNumberTriviaLastModel = NumberTriviaModel(text:"last", number:99, found:true, type:"type");
 

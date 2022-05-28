@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:clean_tdd_numbers/core/error/exception.dart';
-import 'package:clean_tdd_numbers/core/platform/number_trivia_local_data_source.dart';
 import 'package:clean_tdd_numbers/core/platform/number_trivia_remote_datasource.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,7 +35,7 @@ void main() {
   });
 
   // Define Fixtures
-  var tNumber = 1;
+  var tNumber = 1.0;
   var responseRaw = fixture('response.json');
   var responseJson = json.decode(responseRaw);
   var tHeaders = {'Content-Type': 'application/json'};

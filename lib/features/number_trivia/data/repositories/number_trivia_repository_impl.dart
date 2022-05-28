@@ -24,7 +24,7 @@ class NumberTriviaRepositoryImp implements NumberTriviaRepository {
   });
 
   @override
-  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int? number) async {
+  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(double? number) async {
     return _getTrivia(() => remoteDataSource.getConcreteNumberTrivia(number ?? 0));
   }
 

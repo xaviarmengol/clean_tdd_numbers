@@ -3,7 +3,6 @@ import 'package:clean_tdd_numbers/core/error/failures.dart';
 import 'package:clean_tdd_numbers/core/util/input_converter.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 
 void main() {
 
@@ -29,7 +28,7 @@ void main() {
           () async {
             // Act
             // ex: final result = await repositoryImp.getConcreteNumberTrivia(tNumber);
-            final result = inputConverter.stringToUnsignedInt(tNumberString);
+            final result = inputConverter.stringToPositiveDouble(tNumberString);
 
             // Test
             // ex: expect(result, Right(tNumberTriviaModel.toNumberTrivia()),);
@@ -43,7 +42,7 @@ void main() {
           () async {
         // Act
         // ex: final result = await repositoryImp.getConcreteNumberTrivia(tNumber);
-        final result = inputConverter.stringToUnsignedInt(tNumberStringNegative);
+        final result = inputConverter.stringToPositiveDouble(tNumberStringNegative);
 
         // Test
         // ex: expect(result, Right(tNumberTriviaModel.toNumberTrivia()),);
@@ -56,7 +55,7 @@ void main() {
           () async {
         // Act
         // ex: final result = await repositoryImp.getConcreteNumberTrivia(tNumber);
-        final result = inputConverter.stringToUnsignedInt(tNoNumberString);
+        final result = inputConverter.stringToPositiveDouble(tNoNumberString);
 
         // Test
         // ex: expect(result, Right(tNumberTriviaModel.toNumberTrivia()),);

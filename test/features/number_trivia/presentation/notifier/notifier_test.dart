@@ -54,7 +54,7 @@ void main() {
   const tNumberString = '1';
 
   // This is the successful output of the InputConverter
-  int tNumberParsed = int.parse(tNumberString);
+  double tNumberParsed = int.parse(tNumberString).toDouble();
 
   // NumberTrivia instance is needed too, of course
   const tNumberTrivia = NumberTrivia(number: 1, text: 'test trivia');
@@ -74,7 +74,7 @@ void main() {
           () async {
         // On the fly mock behaviour definition
 
-        when(() => mockInputConverter.stringToUnsignedInt(tNumberString))
+        when(() => mockInputConverter.stringToPositiveDouble(tNumberString))
             .thenAnswer((_) => Right(tNumberParsed));
 
         when(() =>
@@ -111,7 +111,7 @@ void main() {
         () async {
       // On the fly mock behaviour definition
 
-      when(() => mockInputConverter.stringToUnsignedInt(tNumberString))
+      when(() => mockInputConverter.stringToPositiveDouble(tNumberString))
           .thenAnswer((_) => Right(tNumberParsed));
 
       when(() =>

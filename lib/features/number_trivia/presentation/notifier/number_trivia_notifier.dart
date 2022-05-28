@@ -18,7 +18,7 @@ class NumberNotifier extends StateNotifier<NumberTriviaState> {
 
   getConcreteTrivia(String numberText) async {
     var result = await _inputConverter
-        .stringToUnsignedInt(numberText)
+        .stringToPositiveDouble(numberText)
         .ifRightDo((value) {
           state = Loading();
         })
