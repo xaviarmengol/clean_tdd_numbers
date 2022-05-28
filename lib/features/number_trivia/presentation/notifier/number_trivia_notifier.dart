@@ -1,13 +1,10 @@
 import 'package:clean_tdd_numbers/core/util/either_extension.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/util/input_converter.dart';
-import '../../domain/entities/number_trivia.dart';
 import '../../domain/usecases/get_concrete_number_usecase.dart';
 import '../../domain/usecases/get_random_number_usecase.dart';
-import '../bloc/number_trivia_bloc.dart';
 import 'number_trivia_state.dart';
 
 class NumberNotifier extends StateNotifier<NumberTriviaState> {

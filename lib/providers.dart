@@ -1,5 +1,4 @@
 
-import 'package:clean_tdd_numbers/core/usecases/usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +8,7 @@ import 'core/platform/network_info.dart';
 import 'core/platform/number_trivia_local_data_source.dart';
 import 'core/platform/number_trivia_remote_datasource.dart';
 import 'core/util/input_converter.dart';
-import 'features/number_trivia/data/repositories/number_trivia_repository_impl.dart';
+import 'features/number_trivia/data/repositories/number_trivia_repository_cached_impl.dart';
 import 'features/number_trivia/domain/usecases/get_concrete_number_usecase.dart';
 import 'features/number_trivia/domain/usecases/get_random_number_usecase.dart';
 import 'features/number_trivia/presentation/notifier/number_trivia_notifier.dart';
@@ -29,7 +28,6 @@ final internetCheckerProvider = Provider ((ref) => InternetConnectionChecker());
 
 final inputConverterProvider = Provider((ref) => InputConverter());
 
-
 final httpProvider = Provider ((ref) => http.Client());
 
 final networkInfoProvider = Provider((ref)  {
@@ -41,8 +39,6 @@ final networkInfoProvider = Provider((ref)  {
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
 });
-
-
 
 
 final numberLocalDataSourceProvider = Provider ((ref)  {
@@ -63,7 +59,7 @@ final numberTriviaRepositoryProvider = Provider( (ref)  {
   final remoteDataSource = ref.watch(numberRemoteDataSourceProvider);
   final networkInfo = ref.watch(networkInfoProvider);
 
-  return NumberTriviaRepositoryImp(
+  return NumberTriviaRepositoryCachedImp(
     localDataSource: localDataSource,
     remoteDataSource: remoteDataSource,
     networkInfo: networkInfo);

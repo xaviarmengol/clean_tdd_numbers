@@ -1,8 +1,6 @@
-import 'package:clean_tdd_numbers/features/number_trivia/presentation/bloc/number_trivia_bloc.dart';
 import 'package:clean_tdd_numbers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/number_trivia.dart';
@@ -14,8 +12,6 @@ class InputNumberPageProvider extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final testInstant = ref.watch(inputConverterProvider);
-    //final testFuture = ref.watch(testFutureProvider);
     final numberState = ref.watch(numberNotifierProvider);
 
     // Page State
@@ -23,14 +19,6 @@ class InputNumberPageProvider extends ConsumerWidget {
 
     ref.listen(numberNotifierProvider, (previous, next) {
       if (previous != next) {
-        //print (next.toString());
-        /*
-          var snackBar = SnackBar(
-            content: Text('Yay! A SnackBar at ${next.toString()}!'),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        }
-        */
       }
     });
 
@@ -42,16 +30,6 @@ class InputNumberPageProvider extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-/*
-            testFuture.when(
-                data: (data) {return Text(data.toString());},
-                error: (error, _) { return Text("Error: ${error.toString()}");},
-                loading: () {return const CircularProgressIndicator();}
-            ),
-
- */
-
-            //Text(numberState.toString()),
 
             Padding(
               padding: const EdgeInsets.all(32.0),
@@ -139,18 +117,31 @@ class NumberStateDisplayer extends ConsumerWidget {
         "Start Searching!",
         style: Theme.of(context).textTheme.headline6,
       );
+
     } else if (state is Loading) {
       return const CircularProgressIndicator();
+
     } else if (state is Loaded) {
       // TODO: Why is not direcly casted?????
-      final stateLoaded = state as Loaded;
-      return DataIsLoaded(numberTrivia: stateLoaded.trivia);
+      return DataIsLoaded(numberTrivia: (state as Loaded).trivia);
+
     } else if (state is Error) {
-      return Container();
+      return Column(
+        children: [
+          Text(
+            "It seems that we have problems with your number, try again!",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          Text(
+            (state as Error).message,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ],
+      );
+
     } else {
       throw UnimplementedError("State not implemented");
     }
-
   }
 }
 

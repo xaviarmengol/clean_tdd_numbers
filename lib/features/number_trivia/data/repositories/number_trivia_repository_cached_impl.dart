@@ -11,13 +11,13 @@ import '../models/number_trivia_model.dart';
 
 typedef ReturnFutureModelFun = Future<NumberTriviaModel> Function();
 
-class NumberTriviaRepositoryImp implements NumberTriviaRepository {
+class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
 
   final NumberTriviaRemoteDataSource remoteDataSource;
   final NumberTriviaLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
 
-  NumberTriviaRepositoryImp({
+  NumberTriviaRepositoryCachedImp({
     required this.remoteDataSource,
     required this.localDataSource,
     required this.networkInfo
@@ -25,7 +25,7 @@ class NumberTriviaRepositoryImp implements NumberTriviaRepository {
 
   @override
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int? number) async {
-    return _getTrivia(() => remoteDataSource.getConcreteNumberTrivia(number ?? 0));
+    return _getTrivia(() => remoteDataSource.getConcreteNumberTrivia(number ?? 0), number: number ?? 0);
   }
 
   @override
@@ -34,16 +34,20 @@ class NumberTriviaRepositoryImp implements NumberTriviaRepository {
   }
 
 
-  Future<Either<Failure, NumberTrivia>> _getTrivia(ReturnFutureModelFun getRemoteData, {String numberString = ""}) async {
+  Future<Either<Failure, NumberTrivia>> _getTrivia(ReturnFutureModelFun getRemoteData, {int? number}) async {
 
     NumberTriviaModel numberTriviaModelFromRemote;
     NumberTriviaModel numberTriviaModel;
     Either<Failure, NumberTrivia> numberTriviaResult = Left(CacheFailure());
 
+    int numToGet = number ?? 0;
+
     // We try to upload from network and catch
     if (await networkInfo.isConnected) {
       try {
         numberTriviaModelFromRemote = await getRemoteData();
+        numToGet = numberTriviaModelFromRemote.number ?? 0;
+
         //print("Repository -> ReadRemote: {$numberTriviaModelFromRemote}");
         await localDataSource.cacheNumberTrivia(numberTriviaModelFromRemote);
       } catch (e) {
@@ -56,12 +60,27 @@ class NumberTriviaRepositoryImp implements NumberTriviaRepository {
 
     // One source of truth
     try {
-      numberTriviaModel = await localDataSource.getLastNumber();
-      //print("Repository -> GetLastNumber: {$numberTriviaModel}");
-
+      numberTriviaModel = await localDataSource.getConcreteNumberTrivia(numToGet);
+      //print("Repository -> getConcreteNumberTrivia: {$numberTriviaModel}");
       numberTriviaResult = Right(numberTriviaModel.toNumberTrivia());
     } catch (e) {
-      print("Error loading data from local ");
+      print("Error loading data from local - Concrete number ");
+
+      numberTriviaResult = Left(CacheFailure());
+
+      /*
+      // One source of truth
+      try {
+        numberTriviaModel = await localDataSource.getLastNumber();
+        //print("Repository -> GetLastNumber: {$numberTriviaModel}");
+
+        numberTriviaResult = Right(numberTriviaModel.toNumberTrivia());
+      } catch (e) {
+        print("Error loading data from local  - Last Number");
+      }
+
+       */
+
     }
 
     //print("NumberTriviaRepositoryImp: {$numberTriviaResult}");
