@@ -4,7 +4,7 @@ import 'package:clean_tdd_numbers/core/platform/network_info.dart';
 import 'package:clean_tdd_numbers/core/platform/number_trivia_local_data_source.dart';
 import 'package:clean_tdd_numbers/core/platform/number_trivia_remote_datasource.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/data/models/number_trivia_model.dart';
-import 'package:clean_tdd_numbers/features/number_trivia/data/repositories/number_trivia_repository_impl.dart';
+import 'package:clean_tdd_numbers/features/number_trivia/data/repositories/number_trivia_repository_cached_impl.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -16,7 +16,7 @@ class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
   // class to test
-  late NumberTriviaRepositoryImp repositoryImp;
+  late NumberTriviaRepositoryCachedImp repositoryImp;
 
   // Mock repository to be able to launch the test
   late MockNumberTriviaRemoteDataSource mockNumberTriviaRemoteDataSource;
@@ -31,7 +31,7 @@ void main() {
     mockNetworkInfo = MockNetworkInfo();
 
     // Set up class to test
-    repositoryImp = NumberTriviaRepositoryImp(
+    repositoryImp = NumberTriviaRepositoryCachedImp(
       remoteDataSource: mockNumberTriviaRemoteDataSource,
       localDataSource: mockNumberTriviaLocalDataSource,
       networkInfo: mockNetworkInfo,
@@ -69,7 +69,9 @@ void main() {
         when(() => mockNetworkInfo.isConnected)
             .thenAnswer((_) async => true);
         when(() => mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber)).thenAnswer((invocation) async => tNumberTriviaModel);
-        when(() => mockNumberTriviaLocalDataSource.getLastNumber()). thenAnswer((invocation) async => tNumberTriviaModel);
+        when(() => mockNumberTriviaLocalDataSource.getConcreteNumberTrivia(tNumber)). thenAnswer((invocation) => tNumberTriviaModel);
+
+        // TODO: Redo test
 
 
         // The "act" phase of the test.
@@ -82,7 +84,7 @@ void main() {
         verify(() =>  mockNetworkInfo.isConnected);
         verify(() => mockNumberTriviaLocalDataSource.cacheNumberTrivia(tNumberTriviaModel));
         verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
-        verify(() =>  mockNumberTriviaLocalDataSource.getLastNumber());
+        //verify(() =>  mockNumberTriviaLocalDataSource.getLastNumber());
 
         // Verify
         verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
@@ -96,8 +98,9 @@ void main() {
 
         when(() => mockNetworkInfo.isConnected)
             .thenAnswer((_) async => false);
-        when(() => mockNumberTriviaLocalDataSource.getLastNumber())
-            .thenAnswer((invocation) async => tNumberTriviaLastModel);
+        when(() => mockNumberTriviaLocalDataSource.getConcreteNumberTrivia(tNumber)).thenAnswer((invocation) => tNumberTriviaLastModel);
+
+        //TODO: Redo tests
 
         // The "act" phase of the test.
         final result = await repositoryImp.getConcreteNumberTrivia(tNumber);
@@ -107,7 +110,7 @@ void main() {
 
         // Verify that the methods have been called on the Repository
         verify(() =>  mockNetworkInfo.isConnected);
-        verify(() =>  mockNumberTriviaLocalDataSource.getLastNumber());
+        //verify(() =>  mockNumberTriviaLocalDataSource.getLastNumber());
 
         // Verify that random has not been called
         verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);

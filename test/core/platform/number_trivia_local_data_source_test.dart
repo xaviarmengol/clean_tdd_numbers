@@ -2,16 +2,17 @@
 import 'dart:convert';
 
 import 'package:clean_tdd_numbers/core/error/exception.dart';
+import 'package:clean_tdd_numbers/core/platform/key_value_local_data_source.dart';
 import 'package:clean_tdd_numbers/core/platform/number_trivia_local_data_source.dart';
+import 'package:clean_tdd_numbers/features/cache/domain/entities/key_value.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // Mock repositories
 // ex: class MockNumberTriviaRemoteDataSource extends Mock implements NumberTriviaRemoteDataSource {}
 
-class MockSharedPreferences extends Mock implements SharedPreferences {}
+class MockKeyValueLocalDataSource extends Mock implements KeyValueLocalDataSource {}
 
 void main() {
 
@@ -19,14 +20,14 @@ void main() {
   late NumberTriviaLocalDataSourceImpl numberTriviaLocalDataSourceImpl;
 
   // Instantiate repositories
-  late MockSharedPreferences mockSharedPreferences;
+  late MockKeyValueLocalDataSource mockKeyValue;
 
   setUp( () {
     // Setup Mocks
-    mockSharedPreferences = MockSharedPreferences();
+    mockKeyValue = MockKeyValueLocalDataSource();
 
     // Setup Class to test
-    numberTriviaLocalDataSourceImpl = NumberTriviaLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
+    numberTriviaLocalDataSourceImpl = NumberTriviaLocalDataSourceImpl(keyValueLocalDataSource: mockKeyValue);
 
   });
 
@@ -43,7 +44,8 @@ void main() {
             // ex: when(() => mockNetworkInfo.isConnected)
             //             .thenAnswer((_) async => true);
             var tNumberTriviaModelRaw = json.encode(tNumberTriviaModel.toJson());
-            when(() => mockSharedPreferences.getString(tNumberString)).thenAnswer((invocation) => tNumberTriviaModelRaw);
+            when(() => mockKeyValue.getKeyValue(tNumberString)).thenAnswer((invocation) =>
+            KeyValue(key: tNumberString, value: tNumberTriviaModelRaw));
 
 
             // Act
@@ -57,8 +59,8 @@ void main() {
             // Verify
             // ex: verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
             // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
-            verify(() => mockSharedPreferences.getString(tNumberString));
-            verifyNoMoreInteractions(mockSharedPreferences);
+            verify(() => mockKeyValue.getKeyValue(tNumberString));
+            verifyNoMoreInteractions(mockKeyValue);
           }
   );
 
@@ -69,7 +71,7 @@ void main() {
         // On the fly mock behaviour definition
         // ex: when(() => mockNetworkInfo.isConnected)
         //             .thenAnswer((_) async => true);
-        when(() => mockSharedPreferences.getString(tNumberString)).thenThrow(Exception('error test'));
+        when(() => mockKeyValue.getKeyValue(tNumberString)).thenThrow(Exception('error test'));
 
         // Act
         // ex: final result = await repositoryImp.getConcreteNumberTrivia(tNumber);
@@ -82,36 +84,10 @@ void main() {
         // Verify
         // ex: verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
         // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
-        verify(() => mockSharedPreferences.getString(tNumberString));
+        verify(() => mockKeyValue.getKeyValue(tNumberString));
       }
   );
 
-  test (
-      'Test that we throw correct exception when data that we get is NULL',
-          () async {
-        // On the fly mock behaviour definition
-        // ex: when(() => mockNetworkInfo.isConnected)
-        //             .thenAnswer((_) async => true);
-        var tNumberTriviaModelRaw = json.encode(tNumberTriviaModel.toJson());
-        when(() => mockSharedPreferences.getString(tNumberString)).thenAnswer((invocation) => null);
-
-
-        // Act
-        // ex: final result = await repositoryImp.getConcreteNumberTrivia(tNumber);
-
-        // Test
-        // ex: expect(result, Right(tNumberTriviaModel.toNumberTrivia()),);
-        expect(() => numberTriviaLocalDataSourceImpl.getConcreteNumberTrivia(tNumber), throwsA(isA<CacheException>()));
-
-
-        // Verify
-        // ex: verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
-        // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
-        verify(() => mockSharedPreferences.getString(tNumberString));
-        verifyNoMoreInteractions(mockSharedPreferences);
-
-      }
-  );
 
   test (
       'Test that we cached Number Trivia',
@@ -120,7 +96,7 @@ void main() {
         // ex: when(() => mockNetworkInfo.isConnected)
         //             .thenAnswer((_) async => true);
         var tNumberTriviaModelRaw = json.encode(tNumberTriviaModel.toJson());
-        when(() => mockSharedPreferences.setString(any(), any())).thenAnswer((_) async => true);
+        when(() => mockKeyValue.setKeyValue(any(), any())).thenAnswer((_) async => true);
 
 
 
@@ -138,10 +114,11 @@ void main() {
         // Verify
         // ex: verify(() =>  mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
         // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
-        verify(() => mockSharedPreferences.setString(NumberTriviaLocalDataSourceImpl.lastValueKey,
-            tNumberTriviaModelRaw));
-        verify(() => mockSharedPreferences.setString(tNumberString, tNumberTriviaModelRaw));
-        verifyNoMoreInteractions(mockSharedPreferences);
+
+        //verify(() => mockKeyValue.setString(NumberTriviaLocalDataSourceImpl.lastValueKey, tNumberTriviaModelRaw));
+
+        verify(() => mockKeyValue.setKeyValue(tNumberString, tNumberTriviaModelRaw));
+        verifyNoMoreInteractions(mockKeyValue);
       }
 
   );
@@ -153,7 +130,7 @@ void main() {
         // ex: when(() => mockNetworkInfo.isConnected)
         //             .thenAnswer((_) async => true);
         var tNumberTriviaModelRaw = json.encode(tNumberTriviaModel.toJson());
-        when(() => mockSharedPreferences.setString(any(), any())).thenAnswer((_) async => false);
+        when(() => mockKeyValue.setKeyValue(any(), any())).thenAnswer((_) async => false);
 
 
         // Act
@@ -169,8 +146,8 @@ void main() {
         // ex: verifyNoMoreInteractions(mockNumberTriviaRemoteDataSource);
 
 
-        verify(() => mockSharedPreferences.setString(tNumberString, tNumberTriviaModelRaw)).called(1);
-        verifyNoMoreInteractions(mockSharedPreferences);
+        verify(() => mockKeyValue.setKeyValue(tNumberString, tNumberTriviaModelRaw)).called(1);
+        verifyNoMoreInteractions(mockKeyValue);
       }
 
 

@@ -1,4 +1,4 @@
-import 'package:clean_tdd_numbers/providers.dart';
+import 'package:clean_tdd_numbers/features/number_trivia/di/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +8,7 @@ import 'InputNumberPage_state.dart';
 
 class InputNumberPageProvider extends ConsumerWidget {
   const InputNumberPageProvider({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,6 +25,18 @@ class InputNumberPageProvider extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Number Trivia"),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.clear_all),
+            tooltip: 'Clear cache',
+            onPressed: () {
+              final cleared = ref.read(numberNotifierProvider.notifier).clearCache();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Cache cleared')));
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(

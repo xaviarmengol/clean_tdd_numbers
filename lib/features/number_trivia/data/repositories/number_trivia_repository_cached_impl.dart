@@ -41,6 +41,8 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
     Either<Failure, NumberTrivia> numberTriviaResult = Left(CacheFailure());
 
     double numToGet = number ?? 0;
+    bool noNumberProvided = number == null;
+    bool remoteNumberOk = false;
 
     // We try to upload from network and catch
     if (await networkInfo.isConnected) {
@@ -48,8 +50,9 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
         numberTriviaModelFromRemote = await getRemoteData();
         numToGet = numberTriviaModelFromRemote.number ?? 0.0;
 
-        //print("Repository -> ReadRemote: {$numberTriviaModelFromRemote}");
+        print("Repository -> ReadRemote: {$numberTriviaModelFromRemote}");
         await localDataSource.cacheNumberTrivia(numberTriviaModelFromRemote);
+        remoteNumberOk = true;
       } catch (e) {
         print("Error connecting to network or caching the value");
       }
@@ -60,12 +63,21 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
 
     // One source of truth
     try {
-      numberTriviaModel = await localDataSource.getConcreteNumberTrivia(numToGet);
+
+      if (noNumberProvided && !remoteNumberOk) {
+        // If remote error and random, give a random cached number
+        print('Getting random from cache: No number provided');
+        numberTriviaModel = localDataSource.getRandomCachedNumber();
+
+      } else {
+        numberTriviaModel = localDataSource.getConcreteNumberTrivia(numToGet);
+      }
+
       //print("Repository -> getConcreteNumberTrivia: {$numberTriviaModel}");
       numberTriviaResult = Right(numberTriviaModel.toNumberTrivia());
     } catch (e) {
       print("Error loading data from local - Concrete number ");
-
+      print(e.toString());
       numberTriviaResult = Left(CacheFailure());
 
     }
@@ -74,6 +86,21 @@ class NumberTriviaRepositoryCachedImp implements NumberTriviaRepository {
 
     return numberTriviaResult;
   }
+
+  /*
+  @override
+  Future<Either<Failure, bool>> clearCache() async {
+
+    try {
+      await localDataSource.removeAllCache();
+      return Right(true);
+    } catch (e) {
+      print("Error clearing cache");
+      return Left(CacheFailure());
+    }
+  }
+
+   */
 
 
 }

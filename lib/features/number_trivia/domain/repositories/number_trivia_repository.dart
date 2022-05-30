@@ -8,5 +8,6 @@ abstract class NumberTriviaRepository {
 
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(double? number);
   Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia();
+  //Future<Either<Failure, bool>> clearCache();
 
 }

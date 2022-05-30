@@ -1,30 +1,24 @@
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:clean_tdd_numbers/core/error/exception.dart';
+import 'package:clean_tdd_numbers/core/platform/key_value_local_data_source.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/data/models/number_trivia_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 abstract class NumberTriviaLocalDataSource {
 
-  /// Gets the cached [NumberTriviaModel] which was gotten the last time
-  /// the user had an internet connection.
-  ///
-  /// Throws [NoLocalDataException] if no cached data is present.
-
-  Future<NumberTriviaModel> getLastNumber();
-  Future<NumberTriviaModel> getConcreteNumberTrivia(double number);
+  NumberTriviaModel getConcreteNumberTrivia(double number);
+  NumberTriviaModel getRandomCachedNumber();
   Future<void> cacheNumberTrivia (NumberTriviaModel triviaToCache);
 
 }
 
 class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
 
-  SharedPreferences sharedPreferences;
-  NumberTriviaLocalDataSourceImpl({required this.sharedPreferences});
-
-  static String lastValueKey = 'LAST_NUMBER';
+  final KeyValueLocalDataSource keyValueLocalDataSource;
+  NumberTriviaLocalDataSourceImpl({required this.keyValueLocalDataSource});
 
   @override
   Future<void> cacheNumberTrivia(NumberTriviaModel triviaModelToCache) async {
@@ -33,20 +27,15 @@ class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
     var numberModelString = json.encode(triviaModelToCache.toJson());
 
     var savedOK = false;
-    var savedOKLast = false;
 
     try {
-      savedOK = await (sharedPreferences.setString(
-          numberString, numberModelString));
-
-      savedOKLast = await (sharedPreferences.setString(
-          lastValueKey, numberModelString));
+      savedOK = await (keyValueLocalDataSource.setKeyValue(numberString, numberModelString));
     }
     catch (e) {
       print(e.toString());
       throw CacheException();
     }
-    if (!savedOK || !savedOKLast) {
+    if (!savedOK) {
       print("Error catching value");
       throw CacheException();
     }
@@ -56,35 +45,22 @@ class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
   }
 
   @override
-  Future<NumberTriviaModel> getLastNumber() {
-    var result = _getNumberTriviaModelFromLocalPrefs(lastValueKey);
-    //print("NumberTriviaLocalDataSourceImpl -> getLastNumber: {$result}");
-    return(Future.value(result));
-  }
-
-  @override
-  Future<NumberTriviaModel> getConcreteNumberTrivia(double number) {
+  NumberTriviaModel getConcreteNumberTrivia(double number) {
 
     var result = _getNumberTriviaModelFromLocalPrefs(number.toString());
-    return(Future.value(result));
+    return (result);
 
   }
 
-  NumberTriviaModel _getNumberTriviaModelFromLocalPrefs(String value) {
+  NumberTriviaModel _getNumberTriviaModelFromLocalPrefs(String key) {
     NumberTriviaModel result;
 
     try {
-      var sharedPrefRaw = sharedPreferences.getString(value);
-      //print(sharedPrefRaw);
-      if (sharedPrefRaw != null ) {
-        var decoded = json.decode(sharedPrefRaw);
-        result = NumberTriviaModel.fromJson(decoded);
-        //print("NumberTriviaLocalDataSourceImpl -> _getNumberTriviaModelFromLocalPrefs: {$result}");
-      }
-      else {
-        print("Error Reading Cache. sharedPrefRaw is null");
-        throw CacheException();
-      }
+      var keyValue = keyValueLocalDataSource.getKeyValue(key);
+
+      var valueCoded = json.decode(keyValue.value);
+      result = NumberTriviaModel.fromJson(valueCoded);
+
     } catch (e) {
       print(e.toString());
       throw CacheException();
@@ -92,6 +68,16 @@ class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
 
     return (result);
   }
+
+  @override
+  NumberTriviaModel getRandomCachedNumber() {
+    final allKeysValues = keyValueLocalDataSource.getKeyValues().toList();
+    final keyValueRandom = allKeysValues[Random().nextInt(allKeysValues.length)];
+
+    print ("Random Key -> ${keyValueRandom.key}");
+    return(getConcreteNumberTrivia(double.parse(keyValueRandom.key)));
+  }
+
 
 
 }
