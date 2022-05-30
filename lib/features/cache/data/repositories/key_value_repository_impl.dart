@@ -26,7 +26,7 @@ class KeyValueRepositoryImp implements KeyValueRepository {
       return Right(true);
     } catch (e) {
       print("Error clearing cache");
-      return Left(CacheFailure());
+      return Left(CacheDeleteFailure());
     }
   }
 

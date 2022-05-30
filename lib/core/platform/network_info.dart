@@ -11,9 +11,13 @@ class NetworkInfoImpl implements NetworkInfo {
 
   @override
   Future<bool> get isConnected {
-
     return internetConnectionChecker.hasConnection;
   }
+
+  Stream get onStatusChange {
+    return internetConnectionChecker.onStatusChange;
+  }
+
 
 }
 

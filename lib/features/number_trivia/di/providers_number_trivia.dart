@@ -77,10 +77,9 @@ final numberNotifierProvider = StateNotifierProvider <NumberNotifier, NumberTriv
 
   final getConcreteUseCase = ref.watch(getConcreteNumberUseCaseProvider);
   final getRandomUseCase = ref.watch(getRandomNumberUseCaseProvider);
-  final clearCacheUseCase = ref.watch(clearCacheUseCaseProvider);
   final inputConverter = ref.watch(inputConverterProvider);
 
-  return NumberNotifier(getConcreteUseCase, getRandomUseCase, clearCacheUseCase, inputConverter);
+  return NumberNotifier(getConcreteUseCase, getRandomUseCase, inputConverter);
 
 });
 

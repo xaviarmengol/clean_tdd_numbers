@@ -1,10 +1,11 @@
-import 'package:clean_tdd_numbers/features/number_trivia/di/providers.dart';
+import 'package:clean_tdd_numbers/features/number_trivia/di/providers_number_trivia.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../di/providers_InputNumberPage.dart';
 import '../../domain/entities/number_trivia.dart';
 import '../notifier/number_trivia_state.dart';
-import 'InputNumberPage_state.dart';
+import '../notifier/InputNumberPage_state.dart';
 
 class InputNumberPageProvider extends ConsumerWidget {
   const InputNumberPageProvider({Key? key}) : super(key: key);
@@ -17,9 +18,13 @@ class InputNumberPageProvider extends ConsumerWidget {
     // Page State
     final pageState = ref.watch(inputNumberPageProvider);
 
-    ref.listen(numberNotifierProvider, (previous, next) {
-      if (previous != next) {
+    ref.listen<InputNumberPageState>(inputNumberPageProvider, (previous, next) {
+
+      final snackBarText = next.snackBarText;
+      if (snackBarText != "") {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(snackBarText)));
       }
+
     });
 
     return Scaffold(
@@ -30,10 +35,7 @@ class InputNumberPageProvider extends ConsumerWidget {
             icon: const Icon(Icons.clear_all),
             tooltip: 'Clear cache',
             onPressed: () {
-              final cleared = ref.read(numberNotifierProvider.notifier).clearCache();
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Cache cleared')));
+              ref.read(inputNumberPageProvider.notifier).clearCache();
             },
           ),
         ],

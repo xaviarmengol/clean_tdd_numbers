@@ -24,6 +24,11 @@ class CacheFailure extends Failure {
   String get reason => "Cache can not be loaded";
 }
 
+class CacheDeleteFailure extends Failure {
+  @override
+  String get reason => "Cache can not be deleted";
+}
+
 class InvalidInputFailure extends Failure {
   @override
   String get reason => "Invalid Input";

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/util/input_converter.dart';
-import '../../../cache/domain/usecases/clear_cache_usecase.dart';
 import '../../domain/usecases/get_concrete_number_usecase.dart';
 import '../../domain/usecases/get_random_number_usecase.dart';
 import 'number_trivia_state.dart';
@@ -11,12 +10,11 @@ import 'number_trivia_state.dart';
 class NumberNotifier extends StateNotifier<NumberTriviaState> {
   final GetConcreteNumberUseCase _getConcreteNumberUseCase;
   final GetRandomNumberUseCase _getRandomNumberUseCase;
-  final ClearCacheUseCase _clearCacheUseCase;
 
   final InputConverter _inputConverter;
 
   NumberNotifier(this._getConcreteNumberUseCase, this._getRandomNumberUseCase,
-      this._clearCacheUseCase, this._inputConverter)
+      this._inputConverter)
       : super(Empty());
 
   getConcreteTrivia(String numberText) async {
@@ -41,16 +39,6 @@ class NumberNotifier extends StateNotifier<NumberTriviaState> {
     result.fold((failure) => state = Error(message: failure.reason),
         (value) => state = Loaded(trivia: value));
   }
-
-  clearCache() async {
-
-    final result = await _clearCacheUseCase(NoParams());
-
-    print("clearCache: {$result}");
-
-    result.fold((failure) {}, (value) {});
-  }
-
 
 
 }

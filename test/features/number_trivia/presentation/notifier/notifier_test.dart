@@ -1,7 +1,6 @@
 
 import 'package:clean_tdd_numbers/core/usecases/usecase.dart';
 import 'package:clean_tdd_numbers/core/util/input_converter.dart';
-import 'package:clean_tdd_numbers/features/cache/domain/usecases/clear_cache_usecase.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/domain/usecases/get_concrete_number_usecase.dart';
 import 'package:clean_tdd_numbers/features/number_trivia/domain/usecases/get_random_number_usecase.dart';
@@ -18,7 +17,6 @@ import 'package:mocktail/mocktail.dart';
 
 class MockGetConcreteNumberUseCase extends Mock implements GetConcreteNumberUseCase {}
 class MockGetRandomNumberUseCase extends Mock implements GetRandomNumberUseCase {}
-class MockClearCacheUseCase extends Mock implements ClearCacheUseCase {}
 class MockInputConverter extends Mock implements InputConverter {}
 
 class FakeParams extends Fake implements Params {}
@@ -31,7 +29,6 @@ void main() {
   // Instantiate repositories
   late MockGetConcreteNumberUseCase mockGetConcreteNumberUseCase;
   late MockGetRandomNumberUseCase mockGetRandomNumberUseCase;
-  late MockClearCacheUseCase mockClearCacheUseCase;
   late MockInputConverter mockInputConverter;
 
   setUp( () {
@@ -40,7 +37,6 @@ void main() {
     // Setup Mocks
     mockGetConcreteNumberUseCase = MockGetConcreteNumberUseCase();
     mockGetRandomNumberUseCase = MockGetRandomNumberUseCase();
-    mockClearCacheUseCase = MockClearCacheUseCase();
     mockInputConverter = MockInputConverter();
 
     // Setup Class to test
@@ -48,7 +44,6 @@ void main() {
     numberNotifier = NumberNotifier(
         mockGetConcreteNumberUseCase,
         mockGetRandomNumberUseCase,
-        mockClearCacheUseCase,
         mockInputConverter);
 
   });
