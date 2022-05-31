@@ -34,3 +34,8 @@ class InvalidInputFailure extends Failure {
   String get reason => "Invalid Input";
 }
 
+class EthernetCheckerFailure extends Failure {
+  @override
+  String get reason => "Internet checker failure";
+}
+

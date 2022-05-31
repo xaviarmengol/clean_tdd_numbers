@@ -1,5 +1,5 @@
 
-import 'package:clean_tdd_numbers/core/platform/network_info.dart';
+import 'package:clean_tdd_numbers/data/platform/datasources/network_info.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';

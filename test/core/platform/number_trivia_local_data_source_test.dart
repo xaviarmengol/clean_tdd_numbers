@@ -2,10 +2,10 @@
 import 'dart:convert';
 
 import 'package:clean_tdd_numbers/core/error/exception.dart';
-import 'package:clean_tdd_numbers/core/platform/key_value_local_data_source.dart';
-import 'package:clean_tdd_numbers/core/platform/number_trivia_local_data_source.dart';
-import 'package:clean_tdd_numbers/features/cache/domain/entities/key_value.dart';
-import 'package:clean_tdd_numbers/features/number_trivia/data/models/number_trivia_model.dart';
+import 'package:clean_tdd_numbers/data/platform/datasources/key_value_local_data_source.dart';
+import 'package:clean_tdd_numbers/data/number_trivia/datasources/number_trivia_local_data_source.dart';
+import 'package:clean_tdd_numbers/data/number_trivia/models/number_trivia_model.dart';
+import 'package:clean_tdd_numbers/domain/keyvalue_cache/entities/key_value.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 

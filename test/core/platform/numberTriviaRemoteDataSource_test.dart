@@ -2,8 +2,8 @@
 import 'dart:convert';
 
 import 'package:clean_tdd_numbers/core/error/exception.dart';
-import 'package:clean_tdd_numbers/core/platform/number_trivia_remote_datasource.dart';
-import 'package:clean_tdd_numbers/features/number_trivia/data/models/number_trivia_model.dart';
+import 'package:clean_tdd_numbers/data/number_trivia/datasources/number_trivia_remote_datasource.dart';
+import 'package:clean_tdd_numbers/data/number_trivia/models/number_trivia_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;

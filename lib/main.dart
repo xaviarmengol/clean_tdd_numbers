@@ -1,9 +1,9 @@
+import 'package:clean_tdd_numbers/presentation/number_trivia/pages/InputNumberPage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/cache/di/providers_cache.dart';
-import 'features/number_trivia/presentation/pages/InputNumberPage.dart';
+import 'di/keyvalue_cache/providers_cache.dart';
 
 // To log Riverpod States
 class Logger extends ProviderObserver {
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
 
-      home: InputNumberPageProvider(),
+      home: InputNumberPage(),
     );
   }
 }
