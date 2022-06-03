@@ -70,7 +70,6 @@ class InputNumberPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Text(pageState.hasInternetConnection.toString()),
             Expanded(
               flex: 2,
               child: Column(
